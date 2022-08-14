@@ -5,76 +5,64 @@ import ImageGallery from './ImageGallery/ImageGallery';
 import Button from './Button/Button';
 import Loader from './Loader/Loader';
 import getImage from '../services/getImage';
-import { Component } from 'react';
+import { Component, useState, useEffect } from 'react';
 
-export class App extends Component {
-  state = {
-    gallery: [],
-    page: 1,
-    query: '',
-    total: null,
-    loading: false,
-    imageURL: null,
-  };
+export const App = () => {
+  const [gallery, setGallery] = useState([]);
+  const [page, setPage] = useState(1);
+  const [query, setQuery] = useState('');
+  const [total, setTotal] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [imageURL, setImageURL] = useState(null);
 
-  componentDidUpdate(_, prevState) {
-    if (prevState.gallery !== this.state.gallery) {
-      this.setState({ loading: false });
-    }
-  }
-
-  handleSubmit = query => {
+  const handleSubmit = query => {
     if (query.trim().length === 0) {
       return;
     }
-
-    this.setState({ query, loading: true });
-
-    getImage(query, this.state.page).then(data =>
-      this.setState({
-        gallery: [...data.hits],
-        total: data.totalHits,
-      })
-    );
+    setGallery([]);
+    setQuery(query);
+    setPage(1);
+    setLoading(true);
   };
 
-  handleLoadMoreBtn = async () => {
-    await this.setState(prevState => {
-      return { page: prevState.page + 1, loading: true };
+  const handleLoadMoreBtn = () => {
+    setPage(prevState => prevState + 1);
+    setLoading(true);
+  };
+
+  const onClickGalleryImage = imageURL => {
+    setImageURL(imageURL);
+  };
+
+  useEffect(() => {
+    if (query.trim().length === 0) {
+      return;
+    }
+    getImage(query, page).then(data => {
+      setGallery(prevState => [...prevState, ...data.hits]);
+      setTotal(data.totalHits);
+      setLoading(false);
     });
-    getImage(this.state.query, this.state.page).then(data =>
-      this.setState(prevState => {
-        return { gallery: [...prevState.gallery, ...data.hits] };
-      })
-    );
-  };
+  }, [query, page]);
 
-  onClickGalleryImage = imageURL => {
-    this.setState({ imageURL });
-  };
-
-  render() {
-    const { gallery, imageURL, total } = this.state;
-
-    return (
-      <AppStyled>
-        <Searchbar>
-          <SearchForm onSubmit={this.handleSubmit} />
-        </Searchbar>
-        {gallery.length > 0 && (
-          <>
-            <ImageGallery
-              galleryList={gallery}
-              onClick={this.onClickGalleryImage}
-              imageURL={imageURL}
-            />
-            {total !== gallery.length && (
-              <Button text="Load more" onClick={this.handleLoadMoreBtn} />
-            )}
-          </>
-        )}
-        {this.state.loading && <Loader />}
-      </AppStyled>
-    );
-  }
-}
+  return (
+    <AppStyled>
+      <Searchbar>
+        <SearchForm onSubmit={handleSubmit} />
+      </Searchbar>
+      {gallery.length > 0 && (
+        <>
+          <ImageGallery
+            galleryList={gallery}
+            onClick={onClickGalleryImage}
+            imageURL={imageURL}
+          />
+          {total !== gallery.length && (
+            <Button text="Load more" onClick={handleLoadMoreBtn} />
+          )}
+        </>
+      )}
+      {loading && <Loader />}
+    </AppStyled>
+  );
+};

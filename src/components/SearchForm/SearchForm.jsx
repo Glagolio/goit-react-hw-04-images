@@ -2,7 +2,7 @@ import SearchFormStyled from './SearchForm.styled';
 import SearchFormInput from './SearchFormInput/SearchFormInput';
 import SearchFormButton from './SearchFormButton/SearchFormButton';
 import PropTypes from 'prop-types';
-import { Component, useState } from 'react';
+import { useState } from 'react';
 
 const SearchForm = ({ onSubmit }) => {
   const [searchText, setSeartchText] = useState('');
