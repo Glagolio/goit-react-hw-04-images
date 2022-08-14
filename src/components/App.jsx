@@ -5,7 +5,7 @@ import ImageGallery from './ImageGallery/ImageGallery';
 import Button from './Button/Button';
 import Loader from './Loader/Loader';
 import getImage from '../services/getImage';
-import { Component, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 export const App = () => {
   const [gallery, setGallery] = useState([]);
