@@ -2,7 +2,7 @@ import ImageGalleryItemStyled from './ImageGalleryItem.styled';
 import ImageGalleryItemImage from './ImageGalleryItemImage/ImageGalleryItemImage';
 import Modal from 'components/Modal/Modal';
 import PropTypes from 'prop-types';
-import { Component, useState } from 'react';
+import { useState } from 'react';
 
 const ImageGalleryItem = ({ onClick, galleryList, imageURL }) => {
   const [showModal, setShowModal] = useState(false);
